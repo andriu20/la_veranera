@@ -33,7 +33,7 @@ class MesaView extends StatelessWidget {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

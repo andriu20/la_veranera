@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:la_veranera/src/core/config/error/execptions.dart';
 import 'package:la_veranera/src/core/config/error/failures.dart';
 import 'package:la_veranera/src/data/data/caja_data.dart';
+import 'package:la_veranera/src/domain/dto/caja_dto.dart';
 import 'package:la_veranera/src/domain/repository/caja_repo.dart';
 
 class CajaRepoImpl implements CajaRepo {
@@ -14,6 +15,19 @@ class CajaRepoImpl implements CajaRepo {
   Future<Either<Failure, bool>> cajaAbierta({required String fecha})async {
     try {
       final r = await cajaData.cajaAbierta(fecha: fecha);
+
+      return Right(r);
+    } on ServerExceptions catch (e) {
+
+      log("$e");
+      return Left(ServerFailure(message:  e.message));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> abrirCaja({required CajaDto dto})async {
+    try {
+      final r = await cajaData.abrirCaja(dto: dto);
 
       return Right(r);
     } on ServerExceptions catch (e) {
