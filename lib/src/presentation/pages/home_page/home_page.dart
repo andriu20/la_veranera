@@ -1,6 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:la_veranera/get_it.dart';
+import 'package:la_veranera/src/presentation/cubit/home/home_cubit.dart';
 import 'package:la_veranera/src/presentation/pages/home_page/views/menu_view.dart';
 import 'package:la_veranera/src/presentation/pages/home_page/views/mesa_view.dart';
+import 'package:la_veranera/src/presentation/pages/home_page/views/not_info.dart';
 import 'package:la_veranera/src/presentation/pages/venta_page/venta_page.dart';
 
 // ignore: must_be_immutable
@@ -27,20 +33,46 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: Drawer(child: MenuView()),
-      appBar: AppBar(
-        title: _txt(),
+    log("aaaaa");
+    return BlocProvider(
+      create: (context) => HomeCubit(context: context, cajaRepo: sl()),
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: Drawer(child: MenuView()),
+        appBar: AppBar(
+          title: _txt(),
 
-        leading: IconButton(
-          onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
-          },
-          icon: Icon(Icons.menu),
+          leading: IconButton(
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+            icon: Icon(Icons.menu),
+          ),
+        ),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.white, Colors.grey.shade100],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              final c = context.read<HomeCubit>();
+              return FutureBuilder<bool>(
+                future: c.cajaAbierta(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator.adaptive());
+                  }
+                  return snapshot.data! ? _body() : NotInfo.body(size: _size);
+                },
+              );
+            },
+          ),
         ),
       ),
-      body: _body(),
     );
   }
 
@@ -70,9 +102,6 @@ class HomePage extends StatelessWidget {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              // ScaffoldMessenger.of(context).showSnackBar(
-              //   SnackBar(content: Text('Seleccionaste mesa ${index + 1}')),
-              // );
               Navigator.push(
                 context,
                 MaterialPageRoute(

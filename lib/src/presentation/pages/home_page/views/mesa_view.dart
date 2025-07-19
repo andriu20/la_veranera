@@ -14,62 +14,75 @@ class MesaView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isOcupada = mesa.estado == "Ocupada";
     final size = MediaQuery.sizeOf(context);
+
     return Container(
       decoration: BoxDecoration(
-        color:
-            mesa.estado == "Ocupada"
-                ? Colors
-                    .red
-                    .shade100 // 👉 rojo muy suave
-                : const Color.fromARGB(
-                  61,
-                  200,
-                  230,
-                  201,
-                ), // 👉 verde muy suave (no seleccionada)
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow:
-            mesa.estado == "Ocupada"
-                ? [BoxShadow(color: Colors.grey, offset: Offset(1, 2))]
-                : [],
+        color: isOcupada ? Colors.red.shade50 : Colors.green.shade50,
+        border: Border.all(
+          color: isOcupada ? Colors.redAccent : Colors.green,
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 6,
+            offset: Offset(2, 4),
+          ),
+        ],
       ),
-      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            mesa.mesa,
+            "Mesa ${mesa.mesa}",
             style: TextStyle(
+              fontSize: size.height * 0.035,
               fontWeight: FontWeight.bold,
-              fontSize: size.height * .05,
+              color: Colors.black87,
             ),
           ),
-
-          _rowText(txt1: "Estado: ", txt2: mesa.estado),
-          SizedBox(height: 5),
-
-          _rowText(txt1: "Cuenta: ", txt2: "\$ ${mesa.valor}"),
-          SizedBox(height: 5),
-          Text("Ver detalle", style: TextStyle(color: Colors.red)),
+          SizedBox(height: 8),
+          _infoText("Estado", mesa.estado, isOcupada),
+          _infoText("Cuenta", "\$ ${mesa.valor}", isOcupada),
+          SizedBox(height: 10),
+          Text(
+            "Ver detalle",
+            style: TextStyle(
+              color: isOcupada ? Colors.redAccent : Colors.green.shade800,
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              decoration: TextDecoration.underline,
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget _rowText({required String txt1, required String txt2}) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5),
-      child: RichText(
-        text: TextSpan(
-          style: TextStyle(color: Colors.black),
-          children: [
-            TextSpan(text: txt1, style: TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: txt2),
-          ],
+  Widget _infoText(String label, String value, bool isOcupada) {
+    return RichText(
+      text: TextSpan(
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
         ),
+        children: [
+          TextSpan(
+            text: "$label: ",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text: value,
+            style: TextStyle(
+              color: isOcupada ? Colors.redAccent : Colors.green.shade800,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
