@@ -76,3 +76,43 @@ aperturaDialogo(BuildContext context, HomeCubit cubit) {
     },
   );
 }
+crearMesa(BuildContext context, HomeCubit cubit) {
+  return showDialog(
+    context: context,
+    builder: (_) {
+      return AlertDialog.adaptive(
+        title: Text(
+          "Número de mesas",
+          style: TextStyle(color: Colors.red),
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomInput(
+              onChanged: (e) {},
+              controller: cubit.cantidadMesas,
+
+              prefixIcon: Icon(Icons.attach_money_sharp),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Cancelar", style: TextStyle(color: Colors.red)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              cubit.crearMesas();
+            },
+            child: Text("Crear", style: TextStyle(color: Colors.green)),
+          ),
+        ],
+      );
+    },
+  );
+}

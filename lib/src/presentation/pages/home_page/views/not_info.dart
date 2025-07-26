@@ -2,13 +2,17 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:la_veranera/src/presentation/cubit/home/home_cubit.dart';
-import 'package:la_veranera/src/presentation/pages/home_page/views/dialogo_caja.dart';
+import 'package:la_veranera/src/presentation/pages/home_page/views/dialogos.dart';
 import 'package:la_veranera/src/presentation/widgets/btn_widget.dart';
 import 'package:la_veranera/src/presentation/widgets/loading_widget.dart';
 
-class NotInfo {
-  static Widget body({required Size size}) {
-    return BlocBuilder<HomeCubit, HomeState>(
+class NotInfo extends StatelessWidget {
+  const NotInfo({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.sizeOf(context);
+   return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         final c = context.read<HomeCubit>();
         return Stack(

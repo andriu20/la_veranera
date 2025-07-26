@@ -6,15 +6,15 @@ class HomeState extends Equatable {
   final BuildContext context;
   late bool loading;
 
-  late List<DatumMEntity> mesas;
+  final List<DatumMEntity>? mesas;
   HomeState({
     required this.context,
     this.loading = false,
-    this.mesas = const [],
+    this.mesas ,
   });
 
   @override
-  List<Object> get props => [context, loading, mesas];
+  List<Object?> get props => [context, loading, mesas];
 
   HomeState copyWith({
     BuildContext? context,

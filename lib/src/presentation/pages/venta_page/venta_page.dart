@@ -1,17 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:la_veranera/src/presentation/pages/home_page/views/mesa_view.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:la_veranera/get_it.dart';
+import 'package:la_veranera/src/domain/entity/mesa_entity.dart';
+import 'package:la_veranera/src/presentation/cubit/venta/venta_cubit.dart';
+import 'package:la_veranera/src/presentation/pages/venta_page/modal_view.dart';
 import 'package:la_veranera/src/presentation/widgets/btn_widget.dart';
 
 // ignore: must_be_immutable
-class VentaPage extends StatelessWidget {
+class VentaPage extends StatefulWidget {
   final bool ocupada;
-  final MesaDto mesa;
+  final DatumMEntity mesa;
   VentaPage({super.key, required this.ocupada, required this.mesa});
+
+  @override
+  State<VentaPage> createState() => _VentaPageState();
+}
+
+class _VentaPageState extends State<VentaPage> {
   late Size _size;
+
+  late VentaCubit ventaCubit;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  _init() {
+    ventaCubit = VentaCubit(context: context, plateRepo: sl());
+    ventaCubit.getPlatos();
+  }
+
   @override
   Widget build(BuildContext context) {
     _size = MediaQuery.sizeOf(context);
-    return Scaffold(appBar: AppBar(title: Text("Venta")), body: _body());
+    return BlocProvider(
+      create: (context) => ventaCubit,
+      child: Scaffold(appBar: AppBar(title: Text("Venta")), body: _body()),
+    );
   }
 
   Widget _body() {
@@ -22,7 +49,7 @@ class VentaPage extends StatelessWidget {
         _optiosn(),
         SizedBox(height: 20),
 
-        _plates()
+        _plates(),
       ],
     );
   }
@@ -41,9 +68,9 @@ class VentaPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _rowText(txt1: "Platos: ", txt2: mesa.valor == 0 ? "0" : "4"),
-              _rowText(txt1: "Cuenta: ", txt2: mesa.valor.toString()),
-              _rowText(txt1: "Estado: ", txt2: mesa.estado),
+              _rowText(txt1: "Platos: ", txt2: 0 == 0 ? "0" : "4"),
+              _rowText(txt1: "Cuenta: ", txt2: 0.toString()),
+              _rowText(txt1: "Estado: ", txt2: widget.mesa.estado),
             ],
           ),
         ),
@@ -55,16 +82,22 @@ class VentaPage extends StatelessWidget {
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
       Visibility(
-        visible: mesa.estado=="Ocupada",
-        child: CustomButton(text: "Cobrar", onPressed: () {})),
+        visible: widget.mesa.estado == "Ocupada",
+        child: CustomButton(text: "Cobrar", onPressed: () {}),
+      ),
       SizedBox(width: 40),
-      CustomButton(text: "Agregar plato", onPressed: () {}),
+      CustomButton(
+        text: "Agregar plato",
+        onPressed: () {
+          modalVenta(context,ventaCubit);
+        },
+      ),
     ],
   );
 
-    Widget _plates() {
+  Widget _plates() {
     return Visibility(
-        visible: mesa.estado=="Ocupada",
+      visible: widget.mesa.estado == "Ocupada",
       child: Expanded(
         child: ListView.builder(
           itemCount: 12,
@@ -72,7 +105,10 @@ class VentaPage extends StatelessWidget {
             return ListTile(
               title: Text("Plato $__"),
               subtitle: Text("\$ 12.000"),
-              trailing: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios)),
+              trailing: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.arrow_forward_ios),
+              ),
             );
           },
         ),
